@@ -72,7 +72,7 @@ class Trainer():
 
         since = time.time()
 
-        best_model_wts_test = copy.deepcopy(self.model.state_dict())
+        best_model_wts_test = self.model.get_weights()
         best_acc_test = 0.0
         best_epoch_test = 0
 
