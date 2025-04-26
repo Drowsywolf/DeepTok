@@ -18,10 +18,10 @@ class SVFENDModel(tf.keras.Model):
 
         self.bert = TFBertModel.from_pretrained(bert_model, trainable=False)
 
-        self.text_dim = 768
-        self.comment_dim = 768
-        self.img_dim = 4096
-        self.video_dim = 4096
+        self.text_dim = 96 #768
+        self.comment_dim = 96 #768
+        self.img_dim = 512 #4096
+        self.video_dim = 512 #4096
         self.num_frames = 83
         self.num_audioframes = 50
         self.num_comments = 23

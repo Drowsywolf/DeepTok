@@ -3,6 +3,7 @@ import json
 import os
 import time
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import numpy as np
 import tensorflow as tf
 from sklearn.metrics import *
@@ -95,7 +96,9 @@ class Trainer3():
                     tlabel_event = []
 
                 for batch_data in tqdm(self.dataloaders[phase]):
-                    label = batch_data['label']
+                    label = batch_data['annotation']
+                    label = tf.where(label == '真', 1, 0)
+                    label = tf.cast(label, tf.int32)
                     if self.mode == "eann":
                         label_event = batch_data['label_event']
 
