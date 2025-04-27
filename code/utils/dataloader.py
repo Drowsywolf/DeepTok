@@ -11,6 +11,8 @@ from sklearn import preprocessing
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.spatial import distance
+import torch
+import torch.nn as nn
 
 def str2num(str_x):
     if isinstance(str_x, float):
@@ -86,12 +88,16 @@ class SVFENDDataset():
             comments_mask.append(comment_tokens['attention_mask'])
         comments_inputid = tf.convert_to_tensor(np.array(comments_inputid), dtype=tf.int32)
         comments_mask = tf.convert_to_tensor(np.array(comments_mask), dtype=tf.int32)
+        # comments_inputid = torch.LongTensor(np.array(comments_inputid)) 
+        # comments_mask = torch.LongTensor(np.array(comments_mask))
+
 
         comments_like = []
         for num in item['count_comment_like']:
             num_like = num.split(" ")[0]
             comments_like.append(str2num(num_like))
         comments_like = tf.convert_to_tensor(comments_like, dtype=tf.float32)
+        # comments_like = torch.tensor(comments_like)
 
         # audio frames
         audioframes = self.dict_vid_convfea[vid]

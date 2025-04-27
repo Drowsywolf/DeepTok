@@ -30,6 +30,8 @@ class Trainer3():
                 event_num,
                 save_threshold=0.0,
                 start_epoch=0):
+        
+        print("Trainer3, init")
 
         self.model = model
         self.mode = mode
@@ -55,6 +57,7 @@ class Trainer3():
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
 
     def train(self):
+        print("Training...")
 
         since = time.time()
 
@@ -96,9 +99,7 @@ class Trainer3():
                     tlabel_event = []
 
                 for batch_data in tqdm(self.dataloaders[phase]):
-                    label = batch_data['annotation']
-                    label = tf.where(label == '真', 1, 0)
-                    label = tf.cast(label, tf.int32)
+                    label = batch_data['label']
                     if self.mode == "eann":
                         label_event = batch_data['label_event']
 

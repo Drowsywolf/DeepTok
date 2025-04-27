@@ -72,7 +72,9 @@ class Trainer():
 
         since = time.time()
 
-        best_model_wts_test = self.model.get_weights()
+
+        # best_model_wts_test = self.model.get_weights()
+        # best_model_wts_test = copy.deepcopy(self.model.get_weights())
         best_acc_test = 0.0
         best_epoch_test = 0
 
@@ -94,11 +96,7 @@ class Trainer():
             tf.keras.backend.set_value(self.optimizer.lr, lr)
             
             for phase in ['train', 'test']:
-                training = (phase == 'train')
-                if phase == 'train':
-                    self.model.train()  
-                else:
-                    self.model.eval()   
+                training = (phase == 'train')  
                 print('-' * 10)
                 print (phase.upper())
                 print('-' * 10)
@@ -116,7 +114,7 @@ class Trainer():
                 for batch in tqdm(self.dataloaders[phase]):
                     batch_data=batch
                     for k,v in batch_data.items():
-                        batch_data[k]=v.cuda()
+                        batch_data[k]=v
                     label = batch_data['label']
                     if self.mode == "eann":
                         label_event = batch_data['label_event']
