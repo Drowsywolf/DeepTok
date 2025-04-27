@@ -1,73 +1,95 @@
-# FakeSV
-Official repository for ["***FakeSV: A Multimodal Benchmark with Rich Social Context for Fake News Detection on Short Video Platforms***"](https://arxiv.org/abs/2211.10973), AAAI 2023. (Please note that the arxiv version is more complete.)
-- **Dataset**: The video ID (which can be used to infer the video URL) and corresponding annotations have been released. Also, we provide two data split used in the paper, i.e. event-based and temporal. 
-- **Models**: We reproduce some SOTA methods on fake news video detection to provide benchmark results for FakeSV. Codes for our proposed model SV-FEND and other methods are provided. 
+# FakeSV: Multimodal Misinformation Detection in COVID-19 Short Videos
 
-### Environment
-Anaconda 4.13.0, python 3.8.5, pytorch 1.10.1 and cuda 11.7. For other libs, please refer to the file requirements.txt.
+## **Team DeepTok**  
+- Zhiwei He(zhiwei_he@brown.edu)
+- Jinjia Zhang(jinjia_zhang@brown.edu)
+- Xulong Xiao(xulong_xiao@brown.edu)
+- Zhangchi Fan(zhangchi_fan@brown.edu)
 
-### Application for Data Use
-Please sign [this agreement](https://drive.google.com/file/d/1Y4qVjRbV8MLIqiVn4gITA5Quk8_XDeer) and send the signed copy through your **institutional email** to pengqi.qp@gmail.com.
 
-### Data Processing
-[video-subtitle-extractor](https://github.com/YaoFANGUK/video-subtitle-extractor)
 
-[bert-base-chinese](https://github.com/google-research/bert)
+## **Introduction**  
+- Short video platforms (e.g., TikTok) have become hotspots for spreading fake news, which exacerbates societal harm. Existing research faces two challenges: (1) lack of large-scale multimodal datasets with social context, and (2) insufficient utilization of multimodal features for detection. This project aims to address these gaps by constructing **FakeSV**, the largest Chinese short video dataset for fake news detection, and proposing **SV-FEND**, a multimodal model leveraging news content and social context.  
 
-[VGG19](https://pytorch.org/vision/main/models)
+- This is a **binary classification task** (fake vs. real news) using multimodal data (text, audio, video, user profiles, comments).  
 
-[C3D](https://github.com/yyuanad/Pytorch_C3D_Feature_Extractor)
 
-[VGGish](https://github.com/harritaylor/torchvggish)
 
-[MoviepPy](https://github.com/Zulko/moviepy)
+## **Related Work**  
 
-You could use the above repositories to extract features by yourself, or use our pre-extracted features ([VGG19](https://huggingface.co/datasets/MischaQI/FakeSV/blob/main/ptvgg19_frames.zip)/[C3D](https://huggingface.co/datasets/MischaQI/FakeSV/blob/main/c3d.zip)/[VGGish](https://huggingface.co/datasets/MischaQI/FakeSV/blob/main/dict_vid_audioconvfea.pkl)). Besides, we also provide [five-fold checkpoints](https://huggingface.co/datasets/MischaQI/FakeSV/tree/main/checkpoints) for comparison. 
+-  (Shang et al. 2021) use the extracted speech text to guide the feature learning of visual frames, use MFCC features to enhance the speech text, and then use a co-attention module to fuse the visual and speech information.
+https://ieeexplore.ieee.org/document/9671928
 
-### Citation
-```
-@inproceedings{fakesv, 
-title={FakeSV: A Multimodal Benchmark with Rich Social Context for Fake News Detection  on Short Video Platforms}, 
-author={Qi, Peng and Bu, Yuyan and Cao, Juan and Ji, Wei and Shui, Ruihao and Xiao,  Junbin and Wang, Danding and Chua, Tat-Seng}, 
-booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
-year={2023}, 
-organization={AAAI} 
-} 
-```
+-  (Choi and Ko 2021) propose a well-designed model that uses pre-trained models to extract features of video frames, title, and comments. The difference in topic distribution between title and comments is used to fuse these two modalities and a topic-adversarial classification is used to guide the model to learn topic-agnostic features for good generalization.
+https://dl.acm.org/doi/abs/10.1145/3459637.3482212
 
-[Related Survey (ACM Multimedia 2023)](https://arxiv.org/abs/2302.03242) and [Companion GitHub Repository](https://github.com/ICTMCG/Awesome-Misinfo-Video-Detection) :
-```
-@inproceedings{mvdsurvey, 
-title={Combating Online Misinformation Videos: Characterization, Detection, and Future Directions}, 
-author={Bu, Yuyan and Sheng, Qiang and Cao, Juan and Qi, Peng and Wang, Danding and Li, Jintao}, 
-booktitle={Proceedings of the 31st ACM International Conference on Multimedia}, 
-year={2023},
-doi={10.1145/3581783.3612426},
-publisher = {Association for Computing Machinery},
-} 
-```
+- 
 
-[Related Method Paper (ACL 2023 Findings)](https://aclanthology.org/2023.findings-acl.756/) 
-```
-@inproceedings{need, 
-title={Two Heads Are Better Than One: Improving Fake News Video Detection by Correlating with Neighbors}, 
-author={Qi, Peng  and Zhao, Yuyang  and Shen, Yufeng and Ji, Wei  and Cao, Juan  and Chua, Tat-Seng}, 
-booktitle={Findings of the Association for Computational Linguistics: ACL 2023}, 
-year={2023},
-doi={10.18653/v1/2023.findings-acl.756},
-pages = "11947--11959",
-publisher = {Association for Computational Linguistics},
-} 
-```
 
-[Related Method Paper (MM 2024)](https://www.arxiv.org/abs/2407.16670) 
-```
-@inproceedings{fakingrecipe,
-title={FakingRecipe: Detecting Fake News on Short Video Platforms from the Perspective of Creative Process},
-author={Bu, Yuyan and Sheng, Qiang and Cao, Juan and Qi, Peng and Wang, Danding and Li, Jintao},
-booktitle={Proceedings of the 32nd ACM International Conference on Multimedia},
-year={2024},
-doi={10.1145/3664647.3680663},
-publisher = {Association for Computing Machinery},
-}
-```
+## **Data**  
+**Original Dataset (FakeSV):**  
+- **Source:** Crawled from Douyin (TikTok) and Kuaishou, combined with fact-checking articles.  
+- **Size:** 5,538 videos (1,827 fake, 1,827 real, 1,884 debunked) across 738 events.  
+- **Features:**  
+  - **News Content:** Video frames, audio, titles, transcripts.  
+  - **Social Context:** User comments, publisher profiles (verified status, activity metrics).  
+- **Preprocessing:** Manual annotation, text extraction.  
+
+
+
+## **Methodology**  
+**Model Architecture (SV-FEND):**  
+1. **Multimodal Feature Extraction:**  
+   - **Text:** BERT for titles/transcripts.  
+   - **Audio:** VGGish for acoustic features.  
+   - **Video:** VGG19 (frames) and C3D (motion).  
+   - **Social Context:** BERT for user profiles, weighted comment features.  
+2. **Cross-Modal Fusion:**  
+   - Co-attention transformers to align text, audio, and visual features.  
+   - Self-attention to integrate social context.  
+3. **Classification:** Fully connected layer with softmax.  
+
+
+
+**Training:**  
+- Pretrained models (BERT, VGGish) for feature extraction.  
+- Five-fold cross-validation with event-level splits.  
+- Loss: Binary cross-entropy.  
+
+**Hardest Part of Implementation:**  
+- Changing some models (e.g. viggish) into tensorflow versions.  
+- Efficient fusion of six modals.  
+
+
+
+## **Metrics**  
+- Planned Experiments:
+Evaluate our tensorflow version SV-FEND against existing SV-FEND on the original FakeSV dataset, measuring and comparing accuracy, F1-score, precision, and recall.
+Analyze the performance on another existing dataset.
+
+- While accuracy is applicable, F1-score, Precision, Recall are also critical for fake news detection. A high F1-score balances precision can avoid false accusations of real news as "fake", a high recall can minimize undetected fake content, and a high precision can avoid over-censorship. Therefore, all these 4 metrics are appropriate. 
+
+- The authors were hoping to find the effectiveness of multimodal fusion over single-modality approaches for fake news detection. They use 4 metrics (Accuracy, macro F1-score, precision, and recall) to quantify the results. 
+
+- Base, target, and stretch goals: 
+The base goal is to replicate the core SV-FEND architecture in tensorflow. 
+The target is to achieve similar metrics (Accuracy, macro F1-score, precision, and recall) scores on FakeSV. 
+The stretch goal is to test our model on another existing dataset to validate its effectiveness.
+
+
+
+## **Ethics**  
+1. **What broader societal issues are relevant to your chosen problem space?**  
+   - Fake news on short video platforms exacerbates public harm by spreading health, political, and economic misinformation, undermines trust in legitimate media, and disproportionately targets vulnerable populations. Detection systems must balance ethical challenges like censorship concerns and algorithmic biases while addressing societal divisions.  
+
+2. **Who are the major “stakeholders” in this problem, and what are the consequences of mistakes made by your algorithm?**  
+   - Stakeholders include platform users, publishers, and fact-checkers. False positives could unfairly penalize creators, while false negatives perpetuate misinformation.   
+
+
+
+## **Division of Labor**  
+- —Zhiwei He
+- —Jinjia Zhang
+- —Xulong Xiao
+- —Zhangchi Fan
+
